@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -102,5 +103,47 @@ func TestCollection_First(t *testing.T) {
 			First()
 
 		assert.Equal(t, 2, val)
+	})
+}
+
+func TestCollection_Combine(t *testing.T) {
+
+	slices1 := []string{"Name", "Age"}
+	slices2 := []string{"Michael", "18"}
+
+	t.Run("struct", func(t *testing.T) {
+		slices := Of(slices1).
+			Combine(slices2)
+
+		fmt.Println(slices)
+
+		assert.Equal(t, map[any]string{"Name": "Michael", "Age": "18"}, slices)
+	})
+
+	t.Run("array", func(t *testing.T) {
+		val := Of([]int{2, 10, 4, 3}).
+			Combine([]int{2, 55, 8, 9})
+
+		assert.Equal(t, map[any]int{2: 2, 10: 55, 4: 8, 3: 9}, val)
+	})
+}
+
+func TestCollection_Contains(t *testing.T) {
+	t.Run("struct", func(t *testing.T) {
+		flag := Of(Employees).
+			Contains(func(employee Employee, _ int) bool {
+				return employee.Age > 400
+			})
+
+		assert.Equal(t, false, flag)
+	})
+
+	t.Run("array", func(t *testing.T) {
+		flag := Of([]int{2, 55, 8, 3}).
+			Contains(func(v int, i int) bool {
+				return v > 3
+			})
+
+		assert.Equal(t, true, flag)
 	})
 }
