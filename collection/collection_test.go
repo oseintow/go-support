@@ -147,3 +147,21 @@ func TestCollection_Contains(t *testing.T) {
 		assert.Equal(t, true, flag)
 	})
 }
+
+func TestCollection_CountBy(t *testing.T) {
+	t.Run("struct", func(t *testing.T) {
+		slice := Of(Employees).
+			CountBy(func(employee Employee) any {
+				return employee.YearsInCompany
+			})
+
+		assert.Equal(t, map[any]int{3: 1, 6: 2, 8: 2, 10: 1}, slice)
+	})
+
+	t.Run("array", func(t *testing.T) {
+		slice := Of([]int{2, 55, 8, 3, 55, 3}).
+			CountBy(nil)
+
+		assert.Equal(t, map[any]int{2: 1, 3: 2, 8: 1, 55: 2}, slice)
+	})
+}

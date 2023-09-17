@@ -127,6 +127,23 @@ func (c *Collection[T]) Count() int {
 	return len(c.Items)
 }
 
+func (c *Collection[T]) CountBy(countByFunc func(T) any) map[any]int {
+	items := map[any]int{}
+	if countByFunc == nil {
+		for _, v := range c.Items {
+			items[v] += 1
+		}
+		return items
+	}
+
+	for _, v := range c.Items {
+		key := countByFunc(v)
+		items[key] += 1
+	}
+
+	return items
+}
+
 func (c *Collection[T]) All() []T {
 	return c.Items
 }
