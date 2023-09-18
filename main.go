@@ -29,17 +29,22 @@ func main() {
 		{Name: "Mon", Age: 33},
 	}
 
-	c := collection.Of(employees).
+	c := collection.Of[Employee](employees).
 		Filter(func(employee Employee, _ int) bool {
 			return employee.Age > 30
 		}).
 		Map(func(employee Employee, _ int) Employee {
 			employee.Age += 10
 			return employee
-		})
+		}).
+		All().([]Employee)
 
-	fmt.Println(c.All())
-	fmt.Println(c.Count())
+	for _, e := range c {
+		fmt.Println(e.Name)
+	}
+
+	fmt.Println(c)
+	fmt.Println(c)
 
 	//avg := c.Avg(func(employee Employee) float64 {
 	//	return float64(employee.Age)
@@ -55,7 +60,7 @@ func main() {
 
 	numbers := []int{2, 3, 4, 5, 6, 7, 7}
 
-	n := collection.Of(numbers).
+	n := collection.Of[int](numbers).
 		Filter(func(i int, _ int) bool {
 			//fmt.Println(j)
 			return i <= 5
@@ -86,7 +91,7 @@ func customers() {
 		{Name: "Mon", Age: 33},
 	}
 
-	r := collection.Of(customers).Chunk(4)
+	r := collection.Of[Customer](customers).Chunk(4)
 	for i, v := range r {
 		fmt.Println(i)
 		for j, s := range v {
@@ -95,7 +100,7 @@ func customers() {
 	}
 	fmt.Printf("Customer avg age is %v\n", r)
 
-	k := collection.Of([]int{2, 3, 4, 5, 6, 7, 7}).Chunk(5)
+	k := collection.Of[int]([]int{2, 3, 4, 5, 6, 7, 7}).Chunk(5)
 	fmt.Printf("Numbers age is %v\n", k)
 
 	slices()

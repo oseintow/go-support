@@ -1,6 +1,14 @@
 package collection
 
+type OneDimensionalCollectionI[T any] interface {
+	First1D() T
+	Last1D() T
+	All1D() []T
+	Values() []T
+}
+
 type OneDimensionalCollection[T any] struct {
+	OneDimensionalCollectionI[T]
 	Items []T
 }
 
@@ -23,7 +31,7 @@ func (c *OneDimensionalCollection[T]) Filter(fn func(T, int) bool) Collection[T]
 		}
 	}
 
-	return &OneDimensionalCollection[T]{items}
+	return &OneDimensionalCollection[T]{Items: items}
 }
 
 func (c *OneDimensionalCollection[T]) Reject(fn func(T, int) bool) Collection[T] {
@@ -35,7 +43,7 @@ func (c *OneDimensionalCollection[T]) Reject(fn func(T, int) bool) Collection[T]
 		}
 	}
 
-	return &OneDimensionalCollection[T]{items}
+	return &OneDimensionalCollection[T]{Items: items}
 }
 
 func (c *OneDimensionalCollection[T]) Map(fn func(T, int) T) Collection[T] {
@@ -45,7 +53,7 @@ func (c *OneDimensionalCollection[T]) Map(fn func(T, int) T) Collection[T] {
 		items = append(items, fn(item, i))
 	}
 
-	return &OneDimensionalCollection[T]{items}
+	return &OneDimensionalCollection[T]{Items: items}
 }
 
 func (c *OneDimensionalCollection[T]) Chunk(size int) [][]T {
@@ -76,12 +84,11 @@ func (c *OneDimensionalCollection[T]) collapse() {
 }
 
 func (c *OneDimensionalCollection[T]) Combine(elements []T) map[any]T {
-	items := make(map[any]T, len(c.Items))
-	itemsLength := len(c.Items)
-
-	if itemsLength != len(elements) {
+	if len(c.Items) != len(elements) {
 		panic("The two slices/arrays must have equal length")
 	}
+
+	items := make(map[any]T, len(c.Items))
 
 	for i, v := range c.Items {
 		items[v] = elements[i]
@@ -103,7 +110,7 @@ func (c *OneDimensionalCollection[T]) Contains(containsFunc func(T, int) bool) b
 	return flag
 }
 
-func (c *OneDimensionalCollection[T]) First() T {
+func (c *OneDimensionalCollection[T]) First1D() T {
 	var empty T
 
 	if len(c.Items) > 0 {
@@ -113,7 +120,11 @@ func (c *OneDimensionalCollection[T]) First() T {
 	return empty
 }
 
-func (c *OneDimensionalCollection[T]) Last() T {
+func (c *OneDimensionalCollection[T]) First() interface{} {
+	return c.First1D()
+}
+
+func (c *OneDimensionalCollection[T]) Last1D() T {
 	var empty T
 
 	if len(c.Items) > 0 {
@@ -121,6 +132,10 @@ func (c *OneDimensionalCollection[T]) Last() T {
 	}
 
 	return empty
+}
+
+func (c *OneDimensionalCollection[T]) Last() interface{} {
+	return c.Last1D()
 }
 
 func (c *OneDimensionalCollection[T]) Count() int {
@@ -144,10 +159,14 @@ func (c *OneDimensionalCollection[T]) CountBy(countByFunc func(T, int) any) map[
 	return items
 }
 
+func (c *OneDimensionalCollection[T]) All1D() []T {
+	return c.Items
+}
+
 func (c *OneDimensionalCollection[T]) All() interface{} {
 	return c.Items
 }
 
-func (c *OneDimensionalCollection[T]) Values() Collection[T] {
-	return c
+func (c *OneDimensionalCollection[T]) Values() []T {
+	return c.Items
 }

@@ -8,7 +8,7 @@ import (
 
 func TestCollection_Filter(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		employeesCount := Of(Employees).
+		employeesCount := Of[Employee](Employees).
 			Filter(func(employee Employee, _ int) bool {
 				return employee.Age > 40
 			}).
@@ -18,7 +18,7 @@ func TestCollection_Filter(t *testing.T) {
 	})
 
 	t.Run("array", func(t *testing.T) {
-		count := Of([]int{2, 55, 8, 3}).
+		count := Of[int]([]int{2, 55, 8, 3}).
 			Filter(func(v int, i int) bool {
 				return i > 2
 			}).
@@ -30,7 +30,7 @@ func TestCollection_Filter(t *testing.T) {
 
 func TestCollection_Reject(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		employeesCount := Of(Employees).
+		employeesCount := Of[Employee](Employees).
 			Reject(func(employee Employee, _ int) bool {
 				return employee.Age > 40
 			}).
@@ -40,7 +40,7 @@ func TestCollection_Reject(t *testing.T) {
 	})
 
 	t.Run("array", func(t *testing.T) {
-		count := Of([]int{2, 55, 8, 3}).
+		count := Of[int]([]int{2, 55, 8, 3}).
 			Reject(func(v int, i int) bool {
 				return i > 2
 			}).
@@ -52,18 +52,18 @@ func TestCollection_Reject(t *testing.T) {
 
 func TestCollection_Map(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		employee := Of(Employees).
+		employee := Of[Employee](Employees).
 			Map(func(employee Employee, _ int) Employee {
 				employee.Age += 5
 				return employee
 			}).
-			First()
+			First().(Employee)
 
 		assert.Equal(t, 89, employee.Age)
 	})
 
 	t.Run("array", func(t *testing.T) {
-		val := Of([]int{2, 55, 8, 3}).
+		val := Of[int]([]int{2, 55, 8, 3}).
 			Map(func(v int, i int) int {
 				v = v * 2
 				return v
@@ -76,14 +76,14 @@ func TestCollection_Map(t *testing.T) {
 
 func TestCollection_Chunk(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		employees := Of(Employees).
+		employees := Of[Employee](Employees).
 			Chunk(2)
 
 		assert.Equal(t, 3, len(employees))
 	})
 
 	t.Run("array", func(t *testing.T) {
-		val := Of([]int{2, 55, 8, 3}).
+		val := Of[int]([]int{2, 55, 8, 3}).
 			Chunk(3)
 
 		assert.Equal(t, 2, len(val))
@@ -92,14 +92,21 @@ func TestCollection_Chunk(t *testing.T) {
 
 func TestCollection_First(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		employee := Of(Employees).
-			First()
+		employee := Of[Employee](Employees).
+			First().(Employee)
+
+		assert.Equal(t, "Michael", employee.Name)
+	})
+
+	t.Run("1D struct", func(t *testing.T) {
+		employee := Of1D(Employees).
+			First1D()
 
 		assert.Equal(t, "Michael", employee.Name)
 	})
 
 	t.Run("array", func(t *testing.T) {
-		val := Of([]int{2, 55, 8, 3}).
+		val := Of[int]([]int{2, 55, 8, 3}).
 			First()
 
 		assert.Equal(t, 2, val)
@@ -107,12 +114,11 @@ func TestCollection_First(t *testing.T) {
 }
 
 func TestCollection_Combine(t *testing.T) {
-
 	slices1 := []string{"Name", "Age"}
 	slices2 := []string{"Michael", "18"}
 
 	t.Run("struct", func(t *testing.T) {
-		slices := Of(slices1).
+		slices := Of[string](slices1).
 			Combine(slices2)
 
 		fmt.Println(slices)
@@ -121,7 +127,7 @@ func TestCollection_Combine(t *testing.T) {
 	})
 
 	t.Run("array", func(t *testing.T) {
-		val := Of([]int{2, 10, 4, 3}).
+		val := Of[int]([]int{2, 10, 4, 3}).
 			Combine([]int{2, 55, 8, 9})
 
 		assert.Equal(t, map[any]int{2: 2, 10: 55, 4: 8, 3: 9}, val)
@@ -130,7 +136,7 @@ func TestCollection_Combine(t *testing.T) {
 
 func TestCollection_Contains(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		flag := Of(Employees).
+		flag := Of[Employee](Employees).
 			Contains(func(employee Employee, _ int) bool {
 				return employee.Age > 400
 			})
@@ -139,7 +145,7 @@ func TestCollection_Contains(t *testing.T) {
 	})
 
 	t.Run("array", func(t *testing.T) {
-		flag := Of([]int{2, 55, 8, 3}).
+		flag := Of[int]([]int{2, 55, 8, 3}).
 			Contains(func(v int, i int) bool {
 				return v > 3
 			})
@@ -150,7 +156,7 @@ func TestCollection_Contains(t *testing.T) {
 
 func TestCollection_CountBy(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		slice := Of(Employees).
+		slice := Of[Employee](Employees).
 			CountBy(func(employee Employee, _ int) any {
 				return employee.YearsInCompany
 			})
@@ -159,7 +165,7 @@ func TestCollection_CountBy(t *testing.T) {
 	})
 
 	t.Run("array", func(t *testing.T) {
-		slice := Of([]int{2, 55, 8, 3, 55, 3}).
+		slice := Of[int]([]int{2, 55, 8, 3, 55, 3}).
 			CountBy(nil)
 
 		assert.Equal(t, map[any]int{2: 1, 3: 2, 8: 1, 55: 2}, slice)

@@ -4,10 +4,6 @@ import (
 	"reflect"
 )
 
-type Number interface {
-	int | float64
-}
-
 /**
 'average',
 'avg',
@@ -39,7 +35,7 @@ type Number interface {
 'when',
 */
 
-func (c *Collection[T]) Average(avgFunc func(T) float64) float64 {
+func (c *OneDimensionalCollection[T]) Average(avgFunc func(T) float64) float64 {
 	var total float64
 
 	for _, v := range c.Items {
@@ -51,11 +47,11 @@ func (c *Collection[T]) Average(avgFunc func(T) float64) float64 {
 	return total / float64(len(c.Items))
 }
 
-func (c *Collection[T]) Avg(avgFunc func(T) float64) float64 {
+func (c *OneDimensionalCollection[T]) Avg(avgFunc func(T) float64) float64 {
 	return c.Average(avgFunc)
 }
 
-func (c *Collection[T]) av(t interface{}) float64 {
+func (c *OneDimensionalCollection[T]) av(t interface{}) float64 {
 	var total float64
 
 	kind := reflect.ValueOf(t).Kind()
@@ -73,6 +69,6 @@ func (c *Collection[T]) av(t interface{}) float64 {
 	}
 }
 
-func (c *Collection[T]) contains() {
+func (c *OneDimensionalCollection[T]) contains() {
 
 }

@@ -7,7 +7,7 @@ import (
 
 func TestCollection_Average(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
-		count := Of(Employees).
+		count := Of[Employee](Employees).
 			Average(func(employee Employee) float64 {
 				return float64(employee.Age)
 			})
@@ -16,7 +16,7 @@ func TestCollection_Average(t *testing.T) {
 	})
 
 	t.Run("array", func(t *testing.T) {
-		count := Of([]int{4, 9, 2, 6}).
+		count := Of[int]([]int{4, 9, 2, 6}).
 			Avg(func(i int) float64 {
 				return float64(i)
 			})
