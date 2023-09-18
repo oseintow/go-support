@@ -151,7 +151,7 @@ func TestCollection_Contains(t *testing.T) {
 func TestCollection_CountBy(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
 		slice := Of(Employees).
-			CountBy(func(employee Employee) any {
+			CountBy(func(employee Employee, _ int) any {
 				return employee.YearsInCompany
 			})
 

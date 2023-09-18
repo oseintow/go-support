@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	slicess "github.com/oseintow/go-support/slices"
 	str "github.com/oseintow/go-support/string"
 
 	"github.com/oseintow/go-support/collection"
@@ -96,4 +97,59 @@ func customers() {
 
 	k := collection.Of([]int{2, 3, 4, 5, 6, 7, 7}).Chunk(5)
 	fmt.Printf("Numbers age is %v\n", k)
+
+	slices()
+}
+
+func slices() {
+	//slice := slicess.Of[int]([]int{1, 2, 3, 4, 5}).
+	//	Filter(func(i int, j int) bool {
+	//		return i > 3
+	//	}).
+	//	All().([]int)
+	//
+	//fmt.Print("Slices: ")
+	//fmt.Println(slice)
+
+	//slice2 := slicess.Of[int]([][]int{
+	//	{1, 2, 3, 4, 5},
+	//	{1, 2, 3, 4, 5},
+	//	{5, 4, 3, 2, 1},
+	//}).
+	//	Filter(func(i int, j int) bool {
+	//		return i > 3
+	//	}).
+	//	Reject(func(i int, i2 int) bool {
+	//		return i > 2
+	//	}).
+	//	Values().
+	//	All().([][]int)
+	//
+	//fmt.Print("Slices: ")
+	//fmt.Println(slice2)
+
+	employees := []Employee{
+		{Name: "Michael", Age: 29},
+		{Name: "Dee", Age: 25},
+		{Name: "Charles", Age: 45},
+		{Name: "Samuel", Age: 28},
+		{Name: "Diana", Age: 37},
+		{Name: "Mon", Age: 33},
+	}
+
+	c := slicess.Of[Employee](employees).
+		Filter(func(employee Employee, _ int) bool {
+			return employee.Age > 30
+		}).
+		Reject(func(employee Employee, _ int) bool {
+			return employee.Age < 40
+		}).
+		Values().
+		All()
+	fmt.Println("Employees: ")
+	fmt.Println(c)
+
+	slicess.NewOneDSlice([]int{1, 2, 3, 4, 5}).
+		Values().All()
+
 }
