@@ -20,6 +20,7 @@ type Collection[T any] interface {
 	DiffAssoc(map[any]any) map[any]T
 	Duplicates() []T
 	DuplicatesBy(string) []any
+	Every(fn func(T, int) bool) bool
 }
 
 func Of[T any](d interface{}) Collection[T] {

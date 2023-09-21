@@ -5,7 +5,6 @@ import (
 )
 
 type OneDimensionalCollectionI[T any] interface {
-	Collection[T]
 	CollectFirst() T
 	CollectLast() T
 	CollectAll() []T
@@ -261,4 +260,17 @@ func (c *OneDimensionalCollection[T]) All() interface{} {
 
 func (c *OneDimensionalCollection[T]) Values() []T {
 	return c.Items
+}
+
+func (c *OneDimensionalCollection[T]) Every(fn func(T, int) bool) bool {
+	flag := true
+
+	for i, item := range c.Items {
+		if !fn(item, i) {
+			flag = false
+			break
+		}
+	}
+
+	return flag
 }

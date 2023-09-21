@@ -249,3 +249,23 @@ func TestCollection_Each(t *testing.T) {
 		assert.Equal(t, []int{2, 55, 8, 3}, arr.([]int))
 	})
 }
+
+func TestCollection_Every(t *testing.T) {
+	t.Run("struct", func(t *testing.T) {
+		flag := Of[Employee](Employees).
+			Every(func(employee Employee, _ int) bool {
+				return employee.Age > 0
+			})
+
+		assert.Equal(t, true, flag)
+	})
+
+	t.Run("array", func(t *testing.T) {
+		flag := Of[int]([]int{2, 55, 8, 3}).
+			Every(func(v int, i int) bool {
+				return v < 7
+			})
+
+		assert.Equal(t, false, flag)
+	})
+}
