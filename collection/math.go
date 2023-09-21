@@ -35,20 +35,22 @@ import (
 'when',
 */
 
-func (c *OneDimensionalCollection[T]) Average(avgFunc func(T) float64) float64 {
+func (c *OneDimensionalCollection[T]) Average(fn func(T) float64) float64 {
 	var total float64
 
+	if fn == nil {
+	}
 	for _, v := range c.Items {
-		total = total + avgFunc(v)
-
+		total = total + fn(v)
+		
 		// TODO: if it nil and c.Items is a linear array(ie inter or float elements) then find average
 	}
 
 	return total / float64(len(c.Items))
 }
 
-func (c *OneDimensionalCollection[T]) Avg(avgFunc func(T) float64) float64 {
-	return c.Average(avgFunc)
+func (c *OneDimensionalCollection[T]) Avg(fn func(T) float64) float64 {
+	return c.Average(fn)
 }
 
 func (c *OneDimensionalCollection[T]) av(t interface{}) float64 {

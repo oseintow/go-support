@@ -149,12 +149,7 @@ func slices() {
 		Reject(func(employee Employee, _ int) bool {
 			return employee.Age < 40
 		}).
-		Values().
 		All()
 	fmt.Println("Employees: ")
 	fmt.Println(c)
-
-	slicess.NewOneDSlice([]int{1, 2, 3, 4, 5}).
-		Values().All()
-
 }

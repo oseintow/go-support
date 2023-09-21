@@ -1,7 +1,6 @@
 package collection
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -100,7 +99,7 @@ func TestCollection_First(t *testing.T) {
 
 	t.Run("1D struct", func(t *testing.T) {
 		employee := Of1D(Employees).
-			First1D()
+			CollectFirst()
 
 		assert.Equal(t, "Michael", employee.Name)
 	})
@@ -120,8 +119,6 @@ func TestCollection_Combine(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
 		slices := Of[string](slices1).
 			Combine(slices2)
-
-		fmt.Println(slices)
 
 		assert.Equal(t, map[any]string{"Name": "Michael", "Age": "18"}, slices)
 	})
@@ -154,6 +151,26 @@ func TestCollection_Contains(t *testing.T) {
 	})
 }
 
+func TestCollection_DoesntContain(t *testing.T) {
+	t.Run("struct", func(t *testing.T) {
+		flag := Of[Employee](Employees).
+			DoesntContain(func(employee Employee, _ int) bool {
+				return employee.Age == 44
+			})
+
+		assert.Equal(t, true, flag)
+	})
+
+	t.Run("array", func(t *testing.T) {
+		flag := Of[int]([]int{1, 2, 3, 4, 5}).
+			DoesntContain(func(v int, i int) bool {
+				return v < 4
+			})
+
+		assert.Equal(t, false, flag)
+	})
+}
+
 func TestCollection_CountBy(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
 		slice := Of[Employee](Employees).
@@ -169,5 +186,66 @@ func TestCollection_CountBy(t *testing.T) {
 			CountBy(nil)
 
 		assert.Equal(t, map[any]int{2: 1, 3: 2, 8: 1, 55: 2}, slice)
+	})
+}
+
+func TestCollection_Diff(t *testing.T) {
+	slices1 := []string{"John", "Doe", "Foo", "Bar"}
+	slices2 := []string{"Foo", "Mon", "Steve", "Doe"}
+
+	t.Run("struct", func(t *testing.T) {
+		slices := Of[string](slices1).
+			Diff(slices2).
+			All().([]string)
+
+		assert.Equal(t, []string{"John", "Bar"}, slices)
+	})
+
+	t.Run("array", func(t *testing.T) {
+		val := Of[int]([]int{2, 10, 4, 3}).
+			Diff([]int{2, 3, 8, 9}).
+			All().([]int)
+
+		assert.Equal(t, []int{10, 4}, val)
+	})
+}
+
+func TestOneDimensionalCollection_Duplicates(t *testing.T) {
+	t.Run("array", func(t *testing.T) {
+		slices := Of[string]([]string{"a", "b", "a", "c", "b"}).
+			Duplicates()
+
+		assert.Equal(t, []string{"a", "b"}, slices)
+	})
+}
+
+func TestOneDimensionalCollection_DuplicatesBy(t *testing.T) {
+	t.Run("array", func(t *testing.T) {
+		slices := Of[Employee](Employees).
+			DuplicatesBy("YearsInCompany")
+
+		assert.Equal(t, []any{6, 8}, slices)
+	})
+}
+
+func TestCollection_Each(t *testing.T) {
+	t.Run("struct", func(t *testing.T) {
+		employees := Of[Employee](Employees).
+			Each(func(employee Employee, _ int) {
+				employee.Age += 40
+			}).
+			All()
+
+		assert.Equal(t, Employees, employees.([]Employee))
+	})
+
+	t.Run("array", func(t *testing.T) {
+		arr := Of[int]([]int{2, 55, 8, 3}).
+			Each(func(v int, i int) {
+				i += 2
+			}).
+			All()
+
+		assert.Equal(t, []int{2, 55, 8, 3}, arr.([]int))
 	})
 }

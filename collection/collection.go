@@ -3,17 +3,23 @@ package collection
 type Collection[T any] interface {
 	Filter(fn func(T, int) bool) Collection[T]
 	Map(fn func(T, int) T) Collection[T]
+	Each(fn func(T, int)) Collection[T]
 	All() interface{}
 	Reject(fn func(T, int) bool) Collection[T]
-	Chunk(size int) [][]T
-	Average(avgFunc func(T) float64) float64
-	Avg(avgFunc func(T) float64) float64
-	Combine(elements []T) map[any]T
-	Contains(containsFunc func(T, int) bool) bool
+	Chunk(int) [][]T
+	Average(fn func(T) float64) float64
+	Avg(fn func(T) float64) float64
+	Combine([]T) map[any]T
+	Contains(fn func(T, int) bool) bool
+	DoesntContain(fn func(T, int) bool) bool
 	First() interface{}
 	Last() interface{}
 	Count() int
-	CountBy(countByFunc func(T, int) any) map[any]int
+	CountBy(fn func(T, int) any) map[any]int
+	Diff([]T) Collection[T]
+	DiffAssoc(map[any]any) map[any]T
+	Duplicates() []T
+	DuplicatesBy(string) []any
 }
 
 func Of[T any](d interface{}) Collection[T] {
@@ -26,7 +32,7 @@ func NewCollection[T any](d interface{}) Collection[T] {
 		return Of1D(r)
 	case [][]T:
 		//return Of2D(r)
-		panic("WIP: Two Dimensional Collection in progress")
+		panic("two Dimensional collection is a work in progress")
 	default:
 		panic("unsupported type")
 	}
