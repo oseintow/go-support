@@ -1,21 +1,21 @@
 package collection
 
-type TwoDimensionalCollection[T any] struct {
-	Collection[T]
+type TwoDimensionalCollection[K comparable, T any] struct {
+	Collection[K, T]
 	Items [][]T
 }
 
-func Of2D[T any](d [][]T) *TwoDimensionalCollection[T] {
-	return NewTwoDimensionalCollection(d)
+func Of2D[K comparable, T any](d [][]T) *TwoDimensionalCollection[K, T] {
+	return NewTwoDimensionalCollection[K, T](d)
 }
 
-func NewTwoDimensionalCollection[T any](items [][]T) *TwoDimensionalCollection[T] {
-	return &TwoDimensionalCollection[T]{
+func NewTwoDimensionalCollection[K comparable, T any](items [][]T) *TwoDimensionalCollection[K, T] {
+	return &TwoDimensionalCollection[K, T]{
 		Items: items,
 	}
 }
 
-func (c *TwoDimensionalCollection[T]) First() []T {
+func (c *TwoDimensionalCollection[K, T]) First() []T {
 	var empty []T
 
 	if len(c.Items) > 0 {
@@ -25,10 +25,10 @@ func (c *TwoDimensionalCollection[T]) First() []T {
 	return empty
 }
 
-func (c *TwoDimensionalCollection[T]) All() interface{} {
+func (c *TwoDimensionalCollection[K, T]) All() interface{} {
 	return c.Items
 }
 
-func (c *TwoDimensionalCollection[T]) Values() [][]T {
+func (c *TwoDimensionalCollection[K, T]) Values() [][]T {
 	return c.Items
 }

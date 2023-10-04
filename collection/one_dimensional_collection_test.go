@@ -98,7 +98,7 @@ func TestCollection_First(t *testing.T) {
 	})
 
 	t.Run("1D struct", func(t *testing.T) {
-		employee := Of1D(Employees).
+		employee := Of1D[Employee](Employees).
 			CollectFirst()
 
 		assert.Equal(t, "Michael", employee.Name)

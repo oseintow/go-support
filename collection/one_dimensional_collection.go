@@ -4,28 +4,28 @@ import (
 	"reflect"
 )
 
-type IOneDimensionalCollection[T any] interface {
+type IOneDimensionalCollection[K comparable, T any] interface {
 	CollectFirst() T
 	CollectLast() T
 	CollectAll() []T
 	Values() []T
 }
 
-type OneDimensionalCollection[T any] struct {
+type OneDimensionalCollection[K comparable, T any] struct {
 	Items []T
 }
 
-func Of1D[T any](d []T) *OneDimensionalCollection[T] {
-	return NewOneDimensionalCollection(d)
+func Of1D[K comparable, T any](item []T) *OneDimensionalCollection[K, T] {
+	return NewOneDimensionalCollection[K, T](item)
 }
 
-func NewOneDimensionalCollection[T any](items []T) *OneDimensionalCollection[T] {
-	return &OneDimensionalCollection[T]{
+func NewOneDimensionalCollection[K comparable, T any](items []T) *OneDimensionalCollection[K, T] {
+	return &OneDimensionalCollection[K, T]{
 		Items: items,
 	}
 }
 
-func (c *OneDimensionalCollection[T]) Filter(fn func(T, int) bool) Collection[T] {
+func (c *OneDimensionalCollection[K, T]) Filter(fn func(T, int) bool) Collection[K, T] {
 	var items []T
 
 	for i, item := range c.Items {
@@ -34,10 +34,10 @@ func (c *OneDimensionalCollection[T]) Filter(fn func(T, int) bool) Collection[T]
 		}
 	}
 
-	return &OneDimensionalCollection[T]{Items: items}
+	return &OneDimensionalCollection[K, T]{Items: items}
 }
 
-func (c *OneDimensionalCollection[T]) Reject(fn func(T, int) bool) Collection[T] {
+func (c *OneDimensionalCollection[K, T]) Reject(fn func(T, int) bool) Collection[K, T] {
 	var items []T
 
 	for i, v := range c.Items {
@@ -46,20 +46,20 @@ func (c *OneDimensionalCollection[T]) Reject(fn func(T, int) bool) Collection[T]
 		}
 	}
 
-	return &OneDimensionalCollection[T]{Items: items}
+	return &OneDimensionalCollection[K, T]{Items: items}
 }
 
-func (c *OneDimensionalCollection[T]) Map(fn func(T, int) T) Collection[T] {
+func (c *OneDimensionalCollection[K, T]) Map(fn func(T, int) T) Collection[K, T] {
 	var items []T
 
 	for i, item := range c.Items {
 		items = append(items, fn(item, i))
 	}
 
-	return &OneDimensionalCollection[T]{Items: items}
+	return &OneDimensionalCollection[K, T]{Items: items}
 }
 
-func (c *OneDimensionalCollection[T]) Each(fn func(T, int)) Collection[T] {
+func (c *OneDimensionalCollection[K, T]) Each(fn func(T, int)) Collection[K, T] {
 	for i, item := range c.Items {
 		fn(item, i)
 	}
@@ -67,7 +67,7 @@ func (c *OneDimensionalCollection[T]) Each(fn func(T, int)) Collection[T] {
 	return c
 }
 
-func (c *OneDimensionalCollection[T]) Chunk(size int) [][]T {
+func (c *OneDimensionalCollection[K, T]) Chunk(size int) [][]T {
 	if size < 1 {
 		panic("size should be greater than zero(0)")
 	}
@@ -85,11 +85,11 @@ func (c *OneDimensionalCollection[T]) Chunk(size int) [][]T {
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) collapse() *OneDimensionalCollection[T] {
+func (c *OneDimensionalCollection[K, T]) collapse() *OneDimensionalCollection[K, T] {
 	return c
 }
 
-func (c *OneDimensionalCollection[T]) Combine(elements []T) map[any]T {
+func (c *OneDimensionalCollection[K, T]) Combine(elements []T) map[any]T {
 	if len(c.Items) != len(elements) {
 		panic("The two slices/arrays must have equal length")
 	}
@@ -103,7 +103,7 @@ func (c *OneDimensionalCollection[T]) Combine(elements []T) map[any]T {
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) Contains(fn func(T, int) bool) bool {
+func (c *OneDimensionalCollection[K, T]) Contains(fn func(T, int) bool) bool {
 	flag := false
 
 	for i, item := range c.Items {
@@ -116,7 +116,7 @@ func (c *OneDimensionalCollection[T]) Contains(fn func(T, int) bool) bool {
 	return flag
 }
 
-func (c *OneDimensionalCollection[T]) DoesntContain(fn func(T, int) bool) bool {
+func (c *OneDimensionalCollection[K, T]) DoesntContain(fn func(T, int) bool) bool {
 	flag := false
 
 	for i, item := range c.Items {
@@ -129,7 +129,7 @@ func (c *OneDimensionalCollection[T]) DoesntContain(fn func(T, int) bool) bool {
 	return !flag
 }
 
-func (c *OneDimensionalCollection[T]) Diff(elements []T) Collection[T] {
+func (c *OneDimensionalCollection[K, T]) Diff(elements []T) Collection[K, T] {
 	var items []T
 	el := make(map[any]bool)
 
@@ -143,11 +143,11 @@ func (c *OneDimensionalCollection[T]) Diff(elements []T) Collection[T] {
 		}
 	}
 
-	return &OneDimensionalCollection[T]{Items: items}
+	return &OneDimensionalCollection[K, T]{Items: items}
 }
 
 // Move this to maps collection
-func (c *OneDimensionalCollection[T]) DiffAssoc(elements map[any]any) map[any]T {
+func (c *OneDimensionalCollection[K, T]) DiffAssoc(elements map[any]any) map[any]T {
 	items := make(map[any]T)
 
 	for i, v := range c.Items {
@@ -162,7 +162,7 @@ func (c *OneDimensionalCollection[T]) DiffAssoc(elements map[any]any) map[any]T 
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) Duplicates() []T {
+func (c *OneDimensionalCollection[K, T]) Duplicates() []T {
 	var items []T
 	arr := map[any]int{}
 
@@ -179,7 +179,7 @@ func (c *OneDimensionalCollection[T]) Duplicates() []T {
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) DuplicatesBy(fieldName string) []any {
+func (c *OneDimensionalCollection[K, T]) DuplicatesBy(fieldName string) []any {
 	var items []any
 	arr := map[any]int{}
 
@@ -202,7 +202,7 @@ func (c *OneDimensionalCollection[T]) DuplicatesBy(fieldName string) []any {
 }
 
 // I will need to revisit this
-func (c *OneDimensionalCollection[T]) FlatMap(fn func(T, int) []T) []T {
+func (c *OneDimensionalCollection[K, T]) FlatMap(fn func(T, int) []T) []T {
 	var items []T
 
 	for i, item := range c.Items {
@@ -212,7 +212,7 @@ func (c *OneDimensionalCollection[T]) FlatMap(fn func(T, int) []T) []T {
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) FlatMapAny(fn func(T, int) []any) []any {
+func (c *OneDimensionalCollection[K, T]) FlatMapAny(fn func(T, int) []any) []any {
 	var items []any
 
 	for i, item := range c.Items {
@@ -222,7 +222,7 @@ func (c *OneDimensionalCollection[T]) FlatMapAny(fn func(T, int) []any) []any {
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) CollectFirst() T {
+func (c *OneDimensionalCollection[K, T]) CollectFirst() T {
 	var empty T
 
 	if len(c.Items) > 0 {
@@ -232,11 +232,11 @@ func (c *OneDimensionalCollection[T]) CollectFirst() T {
 	return empty
 }
 
-func (c *OneDimensionalCollection[T]) First() interface{} {
+func (c *OneDimensionalCollection[K, T]) First() interface{} {
 	return c.CollectFirst()
 }
 
-func (c *OneDimensionalCollection[T]) CollectFirstWhere(fn func(T, int) bool) T {
+func (c *OneDimensionalCollection[K, T]) CollectFirstWhere(fn func(T, int) bool) T {
 	var item T
 
 	for i, v := range c.Items {
@@ -249,11 +249,11 @@ func (c *OneDimensionalCollection[T]) CollectFirstWhere(fn func(T, int) bool) T 
 	return item
 }
 
-func (c *OneDimensionalCollection[T]) FirstWhere(fn func(T, int) bool) interface{} {
+func (c *OneDimensionalCollection[K, T]) FirstWhere(fn func(T, int) bool) interface{} {
 	return c.CollectFirstWhere(fn)
 }
 
-func (c *OneDimensionalCollection[T]) CollectLast() T {
+func (c *OneDimensionalCollection[K, T]) CollectLast() T {
 	var empty T
 
 	if len(c.Items) > 0 {
@@ -263,15 +263,15 @@ func (c *OneDimensionalCollection[T]) CollectLast() T {
 	return empty
 }
 
-func (c *OneDimensionalCollection[T]) Last() interface{} {
+func (c *OneDimensionalCollection[K, T]) Last() interface{} {
 	return c.CollectLast()
 }
 
-func (c *OneDimensionalCollection[T]) Count() int {
+func (c *OneDimensionalCollection[K, T]) Count() int {
 	return len(c.Items)
 }
 
-func (c *OneDimensionalCollection[T]) CountBy(fn func(T, int) any) map[any]int {
+func (c *OneDimensionalCollection[K, T]) CountBy(fn func(T, int) any) map[any]int {
 	items := map[any]int{}
 	if fn == nil {
 		for _, v := range c.Items {
@@ -288,19 +288,19 @@ func (c *OneDimensionalCollection[T]) CountBy(fn func(T, int) any) map[any]int {
 	return items
 }
 
-func (c *OneDimensionalCollection[T]) CollectAll() []T {
+func (c *OneDimensionalCollection[K, T]) CollectAll() []T {
 	return c.Items
 }
 
-func (c *OneDimensionalCollection[T]) All() interface{} {
+func (c *OneDimensionalCollection[K, T]) All() interface{} {
 	return c.Items
 }
 
-func (c *OneDimensionalCollection[T]) Values() []T {
+func (c *OneDimensionalCollection[K, T]) Values() []T {
 	return c.Items
 }
 
-func (c *OneDimensionalCollection[T]) Every(fn func(T, int) bool) bool {
+func (c *OneDimensionalCollection[K, T]) Every(fn func(T, int) bool) bool {
 	flag := true
 
 	for i, item := range c.Items {

@@ -1,11 +1,11 @@
 package collection
 
-type Collection[T any] interface {
-	Filter(fn func(T, int) bool) Collection[T]
-	Map(fn func(T, int) T) Collection[T]
-	Each(fn func(T, int)) Collection[T]
+type Collection[K comparable, T any] interface {
+	Filter(fn func(T, int) bool) Collection[K, T]
+	Map(fn func(T, int) T) Collection[K, T]
+	Each(fn func(T, int)) Collection[K, T]
 	All() interface{}
-	Reject(fn func(T, int) bool) Collection[T]
+	Reject(fn func(T, int) bool) Collection[K, T]
 	Chunk(int) [][]T
 	Average(fn func(T) float64) float64
 	Avg(fn func(T) float64) float64
@@ -16,7 +16,7 @@ type Collection[T any] interface {
 	Last() interface{}
 	Count() int
 	CountBy(fn func(T, int) any) map[any]int
-	Diff([]T) Collection[T]
+	Diff([]T) Collection[K, T]
 	DiffAssoc(map[any]any) map[any]T
 	Duplicates() []T
 	DuplicatesBy(string) []any
@@ -27,14 +27,14 @@ type Collection[T any] interface {
 	FlatMapAny(fn func(T, int) []any) []any
 }
 
-func Of[T any](d interface{}) Collection[T] {
-	return NewCollection[T](d)
+func Of[K comparable, T any](items []T) Collection[K, T] {
+	return newCollection[K, T](items)
 }
 
-func NewCollection[T any](d interface{}) Collection[T] {
-	switch r := d.(type) {
+func newCollection[K comparable, T any](items interface{}) Collection[K, T] {
+	switch r := items.(type) {
 	case []T:
-		return Of1D(r)
+		return Of1D[K, T](r)
 	case [][]T:
 		//return Of2D(r)
 		panic("two Dimensional collection is a work in progress")
