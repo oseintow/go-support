@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-type OneDimensionalCollectionI[T any] interface {
+type IOneDimensionalCollection[T any] interface {
 	CollectFirst() T
 	CollectLast() T
 	CollectAll() []T
@@ -201,6 +201,27 @@ func (c *OneDimensionalCollection[T]) DuplicatesBy(fieldName string) []any {
 	return items
 }
 
+// I will need to revisit this
+func (c *OneDimensionalCollection[T]) FlatMap(fn func(T, int) []T) []T {
+	var items []T
+
+	for i, item := range c.Items {
+		items = append(items, fn(item, i)...)
+	}
+
+	return items
+}
+
+func (c *OneDimensionalCollection[T]) FlatMapAny(fn func(T, int) []any) []any {
+	var items []any
+
+	for i, item := range c.Items {
+		items = append(items, fn(item, i)...)
+	}
+
+	return items
+}
+
 func (c *OneDimensionalCollection[T]) CollectFirst() T {
 	var empty T
 
@@ -213,6 +234,23 @@ func (c *OneDimensionalCollection[T]) CollectFirst() T {
 
 func (c *OneDimensionalCollection[T]) First() interface{} {
 	return c.CollectFirst()
+}
+
+func (c *OneDimensionalCollection[T]) CollectFirstWhere(fn func(T, int) bool) T {
+	var item T
+
+	for i, v := range c.Items {
+		if fn(v, i) {
+			item = v
+			break
+		}
+	}
+
+	return item
+}
+
+func (c *OneDimensionalCollection[T]) FirstWhere(fn func(T, int) bool) interface{} {
+	return c.CollectFirstWhere(fn)
 }
 
 func (c *OneDimensionalCollection[T]) CollectLast() T {

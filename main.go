@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/oseintow/go-support/collection"
 	slicess "github.com/oseintow/go-support/slices"
 	str "github.com/oseintow/go-support/string"
-
-	"github.com/oseintow/go-support/collection"
 )
 
 type Employee struct {
@@ -39,46 +38,11 @@ func main() {
 		}).
 		All().([]Employee)
 
-	for _, e := range c {
-		fmt.Println(e.Name)
-	}
-
-	fmt.Println(c)
 	fmt.Println(c)
 
-	//avg := c.Avg(func(employee Employee) float64 {
-	//	return float64(employee.Age)
-	//})
-
-	//avg := c.Av("Age")
-	//fmt.Printf("avg: %v\n", avg)
-	//
-	//avg = c.Av(func(employee Employee) float64 {
-	//	return employee.Age
-	//})
-	//fmt.Printf("avg 2: %v\n", avg)
-
-	numbers := []int{2, 3, 4, 5, 6, 7, 7}
-
-	n := collection.Of[int](numbers).
-		Filter(func(i int, _ int) bool {
-			//fmt.Println(j)
-			return i <= 5
-		}).
-		Map(func(i int, _ int) int {
-			i = i + 10
-			return i
-		})
-
-	fmt.Println(n.All())
-
-	avg := n.Avg(func(i int) float64 {
-		return float64(i)
-	})
-
-	fmt.Println(avg)
-
-	customers()
+	//customers()
+	slices()
+	sliceFlatMap()
 }
 
 func customers() {
@@ -102,8 +66,10 @@ func customers() {
 
 	k := collection.Of[int]([]int{2, 3, 4, 5, 6, 7, 7}).Chunk(5)
 	fmt.Printf("Numbers age is %v\n", k)
-
-	slices()
+	//t := []int{}
+	//t = append(t, []int{1, 2, 3, 4}...)
+	//
+	//fmt.Println(t)
 }
 
 func slices() {
@@ -152,4 +118,33 @@ func slices() {
 		All()
 	fmt.Println("Employees: ")
 	fmt.Println(c)
+}
+
+func sliceFlatMap() {
+	arr1 := slicess.Of[int]([]int{2, 4, 8, 3}).
+		FlatMap(func(v int, i int) []int {
+			return []int{2}
+		})
+	fmt.Println(arr1)
+
+	arr2 := slicess.Of[float64, int]([]int{2, 4, 8, 3}).
+		Filter(func(v int, _ int) bool {
+			return v > 2
+		}).
+		//FlatMap(func(v int, i int) []int {
+		//	return []int{v}
+		//}).
+		FlatMap(func(v int, i int) []float64 {
+			return []float64{float64(v) * 2.0}
+			//return []int{v}
+		}).
+		//Map(func(v int, _ int) int {
+		//	return v * 2
+		//}).
+		Reject(func(v float64, _ int) bool {
+			return v < 2
+		}).
+		All()
+
+	fmt.Println(arr2)
 }

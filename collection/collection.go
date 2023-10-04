@@ -21,6 +21,10 @@ type Collection[T any] interface {
 	Duplicates() []T
 	DuplicatesBy(string) []any
 	Every(fn func(T, int) bool) bool
+	FirstWhere(fn func(T, int) bool) interface{}
+	//except()
+	FlatMap(fn func(T, int) []T) []T
+	FlatMapAny(fn func(T, int) []any) []any
 }
 
 func Of[T any](d interface{}) Collection[T] {
