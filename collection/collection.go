@@ -23,9 +23,7 @@ type Collection[K comparable, T any] interface {
 	Every(fn func(T, int) bool) bool
 	FirstWhere(fn func(T, int) bool) interface{}
 	//except()
-	//FlatMap(fn func(T, int) []T) []T
 	FlatMap(fn func(T, int) []K) Collection[K, K]
-	FlatMapAny(fn func(T, int) []any) []any
 }
 
 func Of[K comparable, T any](items []T) Collection[K, T] {

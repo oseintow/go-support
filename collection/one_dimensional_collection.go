@@ -216,16 +216,6 @@ func (c *OneDimensionalCollection[K, T]) FlatMap(fn func(T, int) []K) Collection
 	return newCollection[K, K](items)
 }
 
-func (c *OneDimensionalCollection[K, T]) FlatMapAny(fn func(T, int) []any) []any {
-	var items []any
-
-	for i, item := range c.Items {
-		items = append(items, fn(item, i)...)
-	}
-
-	return items
-}
-
 func (c *OneDimensionalCollection[K, T]) CollectFirst() T {
 	var empty T
 
