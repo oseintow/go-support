@@ -1,8 +1,8 @@
 package collection
 
 type Collection[K comparable, T any] interface {
-	Filter(fn func(T, int) bool) Collection[K, T]
 	Map(fn func(T, int) T) Collection[K, T]
+	Filter(fn func(T, int) bool) Collection[K, T]
 	Each(fn func(T, int)) Collection[K, T]
 	All() interface{}
 	Reject(fn func(T, int) bool) Collection[K, T]
@@ -23,7 +23,8 @@ type Collection[K comparable, T any] interface {
 	Every(fn func(T, int) bool) bool
 	FirstWhere(fn func(T, int) bool) interface{}
 	//except()
-	FlatMap(fn func(T, int) []T) []T
+	//FlatMap(fn func(T, int) []T) []T
+	FlatMap(fn func(T, int) []K) Collection[K, K]
 	FlatMapAny(fn func(T, int) []any) []any
 }
 

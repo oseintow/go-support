@@ -15,8 +15,11 @@ type OneDimensionalCollection[K comparable, T any] struct {
 	Items []T
 }
 
-func Of1D[K comparable, T any](item []T) *OneDimensionalCollection[K, T] {
-	return NewOneDimensionalCollection[K, T](item)
+func Of1D[K comparable, T any](items []T) *OneDimensionalCollection[K, T] {
+	//return NewOneDimensionalCollection[K, T](items)
+	return &OneDimensionalCollection[K, T]{
+		Items: items,
+	}
 }
 
 func NewOneDimensionalCollection[K comparable, T any](items []T) *OneDimensionalCollection[K, T] {
@@ -202,14 +205,15 @@ func (c *OneDimensionalCollection[K, T]) DuplicatesBy(fieldName string) []any {
 }
 
 // I will need to revisit this
-func (c *OneDimensionalCollection[K, T]) FlatMap(fn func(T, int) []T) []T {
-	var items []T
+func (c *OneDimensionalCollection[K, T]) FlatMap(fn func(T, int) []K) Collection[K, K] {
+	var items []K
 
 	for i, item := range c.Items {
 		items = append(items, fn(item, i)...)
 	}
 
-	return items
+	//return &OneDimensionalCollection[K, K]{Items: items}
+	return newCollection[K, K](items)
 }
 
 func (c *OneDimensionalCollection[K, T]) FlatMapAny(fn func(T, int) []any) []any {

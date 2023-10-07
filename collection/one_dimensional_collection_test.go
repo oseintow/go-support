@@ -271,21 +271,13 @@ func TestCollection_Every(t *testing.T) {
 }
 
 func TestCollection_FlatMap(t *testing.T) {
-	//t.Run("struct", func(t *testing.T) {
-	//	flag := Of[Employee](Employees).
-	//		FlatMap(func(employee Employee, _ int) bool {
-	//			return employee.Age > 0
-	//		})
-	//
-	//	assert.Equal(t, true, flag)
-	//})
-
 	t.Run("array", func(t *testing.T) {
-		arr := Of[int]([]int{2, 4, 8, 3}).
-			FlatMap(func(v int, i int) []int {
-				return []int{v * 2}
-			})
+		arr := Of[float64, int]([]int{2, 4, 8, 3}).
+			FlatMap(func(v int, i int) []float64 {
+				return []float64{float64(v) * 2.0}
+			}).
+			All()
 
-		assert.Equal(t, []int{4, 8, 16, 6}, arr)
+		assert.Equal(t, []float64{4.0, 8.0, 16.0, 6.0}, arr)
 	})
 }
