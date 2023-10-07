@@ -212,7 +212,6 @@ func (c *OneDimensionalCollection[K, T]) FlatMap(fn func(T, int) []K) Collection
 		items = append(items, fn(item, i)...)
 	}
 
-	//return &OneDimensionalCollection[K, K]{Items: items}
 	return newCollection[K, K](items)
 }
 

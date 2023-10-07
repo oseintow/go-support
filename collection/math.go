@@ -43,7 +43,7 @@ func (c *OneDimensionalCollection[K, T]) Average(fn func(T) float64) float64 {
 	for _, v := range c.Items {
 		total = total + fn(v)
 
-		// TODO: if it nil and c.Items is a linear array(ie inter or float elements) then find average
+		// TODO: if it nil and c.Items is a linear array(ie integer or float elements) then find average
 	}
 
 	return total / float64(len(c.Items))
