@@ -36,13 +36,13 @@ func main() {
 			employee.Age += 10
 			return employee
 		}).
-		All().([]Employee)
+		All()
 
 	fmt.Println(c)
 
 	//customers()
 	slices()
-	sliceFlatMap()
+	//sliceFlatMap()
 }
 
 func customers() {
@@ -70,6 +70,33 @@ func customers() {
 	//t = append(t, []int{1, 2, 3, 4}...)
 	//
 	//fmt.Println(t)
+}
+
+func of1D() {
+	employees := []Employee{
+		{Name: "Michael", Age: 29},
+		{Name: "Dee", Age: 25},
+		{Name: "Charles", Age: 45},
+		{Name: "Samuel", Age: 28},
+		{Name: "Diana", Age: 37},
+		{Name: "Mon", Age: 33},
+	}
+
+	c := collection.Of1D[Employee](employees).
+		Filter(func(employee Employee, _ int) bool {
+			return employee.Age > 30
+		}).
+		Reject(func(employee Employee, _ int) bool {
+			return employee.Age < 40
+		}).
+		All().([]Employee)
+
+	fmt.Println("Of1D Employees: ")
+
+	for i, v := range c {
+		fmt.Println(i)
+		fmt.Println(v)
+	}
 }
 
 func slices() {
@@ -116,7 +143,7 @@ func slices() {
 			return employee.Age < 40
 		}).
 		All()
-	fmt.Println("Employees: ")
+	fmt.Println("Slices Employees: ")
 	fmt.Println(c)
 }
 

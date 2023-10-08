@@ -52,14 +52,14 @@ func (c *OneDimensionalCollection[K, T]) Reject(fn func(T, int) bool) Collection
 	return &OneDimensionalCollection[K, T]{Items: items}
 }
 
-func (c *OneDimensionalCollection[K, T]) Map(fn func(T, int) T) Collection[K, T] {
-	var items []T
+func (c *OneDimensionalCollection[K, T]) Map(fn func(T, int) K) Collection[K, K] {
+	var items []K
 
 	for i, item := range c.Items {
 		items = append(items, fn(item, i))
 	}
 
-	return &OneDimensionalCollection[K, T]{Items: items}
+	return newCollection[K, K](items)
 }
 
 func (c *OneDimensionalCollection[K, T]) Each(fn func(T, int)) Collection[K, T] {
@@ -165,7 +165,7 @@ func (c *OneDimensionalCollection[K, T]) DiffAssoc(elements map[any]any) map[any
 	return items
 }
 
-func (c *OneDimensionalCollection[K, T]) Duplicates() []T {
+func (c *OneDimensionalCollection[K, T]) Duplicates() Collection[K, T] {
 	var items []T
 	arr := map[any]int{}
 
@@ -179,11 +179,12 @@ func (c *OneDimensionalCollection[K, T]) Duplicates() []T {
 		}
 	}
 
-	return items
+	//return items
+	return newCollection[K, T](items)
 }
 
-func (c *OneDimensionalCollection[K, T]) DuplicatesBy(fieldName string) []any {
-	var items []any
+func (c *OneDimensionalCollection[K, T]) DuplicatesBy(fieldName string) Collection[K, K] {
+	var items []K
 	arr := map[any]int{}
 
 	for _, v := range c.Items {
@@ -197,11 +198,11 @@ func (c *OneDimensionalCollection[K, T]) DuplicatesBy(fieldName string) []any {
 
 	for i, v := range arr {
 		if v > 1 {
-			items = append(items, i.(any))
+			items = append(items, i.(K))
 		}
 	}
-
-	return items
+	
+	return newCollection[K, K](items)
 }
 
 // I will need to revisit this

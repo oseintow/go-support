@@ -1,8 +1,10 @@
 package collection
 
+import "fmt"
+
 type Collection[K comparable, T any] interface {
-	Map(fn func(T, int) T) Collection[K, T]
 	Filter(fn func(T, int) bool) Collection[K, T]
+	Map(fn func(T, int) K) Collection[K, K]
 	Each(fn func(T, int)) Collection[K, T]
 	All() interface{}
 	Reject(fn func(T, int) bool) Collection[K, T]
@@ -18,8 +20,8 @@ type Collection[K comparable, T any] interface {
 	CountBy(fn func(T, int) any) map[any]int
 	Diff([]T) Collection[K, T]
 	DiffAssoc(map[any]any) map[any]T
-	Duplicates() []T
-	DuplicatesBy(string) []any
+	Duplicates() Collection[K, T]
+	DuplicatesBy(string) Collection[K, K]
 	Every(fn func(T, int) bool) bool
 	FirstWhere(fn func(T, int) bool) interface{}
 	//except()
@@ -38,6 +40,7 @@ func newCollection[K comparable, T any](items interface{}) Collection[K, T] {
 		//return Of2D(r)
 		panic("two Dimensional collection is a work in progress")
 	default:
+		fmt.Println(r)
 		panic("unsupported type")
 	}
 }

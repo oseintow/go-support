@@ -196,7 +196,7 @@ func TestCollection_Diff(t *testing.T) {
 	t.Run("struct", func(t *testing.T) {
 		slices := Of[string](slices1).
 			Diff(slices2).
-			All().([]string)
+			All()
 
 		assert.Equal(t, []string{"John", "Bar"}, slices)
 	})
@@ -204,7 +204,7 @@ func TestCollection_Diff(t *testing.T) {
 	t.Run("array", func(t *testing.T) {
 		val := Of[int]([]int{2, 10, 4, 3}).
 			Diff([]int{2, 3, 8, 9}).
-			All().([]int)
+			All()
 
 		assert.Equal(t, []int{10, 4}, val)
 	})
@@ -213,18 +213,28 @@ func TestCollection_Diff(t *testing.T) {
 func TestOneDimensionalCollection_Duplicates(t *testing.T) {
 	t.Run("array", func(t *testing.T) {
 		slices := Of[string]([]string{"a", "b", "a", "c", "b"}).
-			Duplicates()
+			Duplicates().
+			All()
 
 		assert.Equal(t, []string{"a", "b"}, slices)
 	})
 }
 
 func TestOneDimensionalCollection_DuplicatesBy(t *testing.T) {
-	t.Run("array", func(t *testing.T) {
-		slices := Of[Employee](Employees).
-			DuplicatesBy("YearsInCompany")
+	t.Run("years in company", func(t *testing.T) {
+		slices := Of[int, Employee](Employees).
+			DuplicatesBy("YearsInCompany").
+			All()
 
-		assert.Equal(t, []any{6, 8}, slices)
+		assert.Equal(t, []int{6, 8}, slices)
+	})
+
+	t.Run("sex", func(t *testing.T) {
+		slices := Of[string, Employee](Employees).
+			DuplicatesBy("Sex").
+			All()
+
+		assert.Equal(t, []string{"Male", "Female"}, slices)
 	})
 }
 
@@ -236,7 +246,7 @@ func TestCollection_Each(t *testing.T) {
 			}).
 			All()
 
-		assert.Equal(t, Employees, employees.([]Employee))
+		assert.Equal(t, Employees, employees)
 	})
 
 	t.Run("array", func(t *testing.T) {
